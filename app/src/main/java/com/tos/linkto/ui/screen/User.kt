@@ -25,9 +25,9 @@ import com.tos.linkto.R
 
 @Composable
 fun UserScreen() {
-    if(MainActivity.instance.authRepo.isLoggedIn()){
+    if (MainActivity.instance.authRepo.isLoggedIn()) {
 
-    }else{
+    } else {
 
     }
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

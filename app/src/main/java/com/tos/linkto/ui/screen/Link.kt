@@ -22,10 +22,10 @@ import com.tos.linkto.MainActivity
 import com.tos.linkto.R
 
 @Composable
-fun LinkScreen(){
-    if(MainActivity.instance.authRepo.isLoggedIn()){
+fun LinkScreen() {
+    if (MainActivity.instance.authRepo.isLoggedIn()) {
 
-    }else{
+    } else {
 
     }
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -42,7 +42,9 @@ fun LinkScreen(){
                 Icon(
                     painter = painterResource(R.drawable.ic_account_box),
                     contentDescription = "Avatar",
-                    modifier = Modifier.padding(vertical = 4.dp).fillMaxSize()
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                        .fillMaxSize()
                 )
             }
             Text(
@@ -58,7 +60,9 @@ fun LinkScreen(){
                 Icon(
                     painter = painterResource(R.drawable.ic_account_box),
                     contentDescription = stringResource(R.string.placeholder),
-                    modifier = Modifier.padding(vertical = 4.dp).fillMaxSize()
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                        .fillMaxSize()
                 )
             }
             Row(
@@ -67,7 +71,9 @@ fun LinkScreen(){
                 Icon(
                     painter = painterResource(R.drawable.ic_account_box),
                     contentDescription = stringResource(R.string.placeholder),
-                    modifier = Modifier.padding(vertical = 4.dp).fillMaxSize()
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                        .fillMaxSize()
                 )
             }
             Row(
@@ -76,7 +82,9 @@ fun LinkScreen(){
                 Icon(
                     painter = painterResource(R.drawable.ic_account_box),
                     contentDescription = stringResource(R.string.placeholder),
-                    modifier = Modifier.padding(vertical = 4.dp).fillMaxSize()
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                        .fillMaxSize()
                 )
             }
             Text(

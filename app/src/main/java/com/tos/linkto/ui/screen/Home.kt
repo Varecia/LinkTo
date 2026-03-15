@@ -19,10 +19,10 @@ import com.tos.linkto.MainActivity
 import com.tos.linkto.R
 
 @Composable
-fun HomeScreen(){
-    if(MainActivity.instance.authRepo.isLoggedIn()){
+fun HomeScreen() {
+    if (MainActivity.instance.authRepo.isLoggedIn()) {
 
-    }else{
+    } else {
 
     }
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

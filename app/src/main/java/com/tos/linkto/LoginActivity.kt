@@ -19,7 +19,8 @@ class LoginActivity : ComponentActivity() {
             LinkToTheme {
                 AuthScreen(
                     onAuthSuccess = {
-                        Toast.makeText(this,"登录成功",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show()
+                        finish()
                     }
                 )
             }

@@ -64,13 +64,13 @@ fun AuthScreen(
                 FilterChip(
                     selected = isLoginMode,
                     onClick = { isLoginMode = true },
-                    label = { Text(text=stringResource(R.string.login)) }
+                    label = { Text(text = stringResource(R.string.login)) }
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 FilterChip(
                     selected = !isLoginMode,
                     onClick = { isLoginMode = false },
-                    label = { Text(text=stringResource(R.string.register)) }
+                    label = { Text(text = stringResource(R.string.register)) }
                 )
             }
 
@@ -80,7 +80,7 @@ fun AuthScreen(
                 OutlinedTextField(
                     value = username,
                     onValueChange = { username = it },
-                    label = { Text(text=stringResource(R.string.username)) },
+                    label = { Text(text = stringResource(R.string.username)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     modifier = Modifier.fillMaxWidth(),
@@ -92,7 +92,7 @@ fun AuthScreen(
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text(text=stringResource(R.string.email)) },
+                label = { Text(text = stringResource(R.string.email)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                 modifier = Modifier.fillMaxWidth()
@@ -103,7 +103,7 @@ fun AuthScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text(text=stringResource(R.string.password)) },
+                label = { Text(text = stringResource(R.string.password)) },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -115,7 +115,7 @@ fun AuthScreen(
                 OutlinedTextField(
                     value = confirmPassword,
                     onValueChange = { confirmPassword = it },
-                    label = { Text(text=stringResource(R.string.check_password)) },
+                    label = { Text(text = stringResource(R.string.check_password)) },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -146,7 +146,7 @@ fun AuthScreen(
                                 password.isNotBlank() && password == confirmPassword
                     }
                 ) {
-                    Text( text=stringResource(if (isLoginMode) R.string.login else R.string.register))
+                    Text(text = stringResource(if (isLoginMode) R.string.login else R.string.register))
                 }
             }
 
