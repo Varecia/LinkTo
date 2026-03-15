@@ -11,7 +11,6 @@ const authMiddleware = async (req, res, next) => {
             });
         }
 
-        // Remove 'Bearer ' prefix if present
         const token = authHeader.replace('Bearer ', '');
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);

@@ -1,7 +1,7 @@
 {
   "name": "linkto-cloudserver",
   "version": "1.0.0",
-  "description": "LinkTo App Cloud Server",
+  "description": "LinkTo App Cloud Server - Log App Data",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",

@@ -4,7 +4,6 @@ const { body } = require('express-validator');
 const authController = require('../controllers/authController');
 const authMiddleware = require('../middleware/authMiddleware');
 
-// Validation rules
 const registerValidation = [
     body('username')
         .trim()
@@ -29,11 +28,9 @@ const loginValidation = [
         .withMessage('Password is required')
 ];
 
-// Public routes
 router.post('/register', registerValidation, authController.register);
 router.post('/login', loginValidation, authController.login);
 
-// Protected routes
 router.get('/profile', authMiddleware, authController.getProfile);
 router.put('/profile', authMiddleware, authController.updateProfile);
 

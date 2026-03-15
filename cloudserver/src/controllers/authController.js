@@ -2,7 +2,6 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 
-// Generate JWT Token
 const generateToken = (userId) => {
     return jwt.sign(
         { userId },
@@ -11,12 +10,8 @@ const generateToken = (userId) => {
     );
 };
 
-// @desc    Register user
-// @route   POST /api/auth/register
-// @access  Public
 exports.register = async (req, res) => {
     try {
-        // Check validation errors
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({
@@ -27,7 +22,6 @@ exports.register = async (req, res) => {
 
         const { username, email, password } = req.body;
 
-        // Check if user already exists
         const existingUser = await User.findOne({
             $or: [{ email }, { username }]
         });
@@ -39,14 +33,12 @@ exports.register = async (req, res) => {
             });
         }
 
-        // Create new user
         const user = await User.create({
             username,
             email,
             password
         });
 
-        // Generate token
         const token = generateToken(user._id);
 
         res.status(201).json({
@@ -69,12 +61,8 @@ exports.register = async (req, res) => {
     }
 };
 
-// @desc    Login user
-// @route   POST /api/auth/login
-// @access  Public
 exports.login = async (req, res) => {
     try {
-        // Check validation errors
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({
@@ -85,7 +73,6 @@ exports.login = async (req, res) => {
 
         const { email, password } = req.body;
 
-        // Find user by email
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(401).json({
@@ -94,7 +81,6 @@ exports.login = async (req, res) => {
             });
         }
 
-        // Check password
         const isPasswordValid = await user.comparePassword(password);
         if (!isPasswordValid) {
             return res.status(401).json({
@@ -103,7 +89,6 @@ exports.login = async (req, res) => {
             });
         }
 
-        // Generate token
         const token = generateToken(user._id);
 
         res.json({
@@ -126,9 +111,6 @@ exports.login = async (req, res) => {
     }
 };
 
-// @desc    Get user profile
-// @route   GET /api/user/profile
-// @access  Private
 exports.getProfile = async (req, res) => {
     try {
         const user = await User.findById(req.userId).select('-password');
@@ -160,9 +142,6 @@ exports.getProfile = async (req, res) => {
     }
 };
 
-// @desc    Update user profile
-// @route   PUT /api/user/profile
-// @access  Private
 exports.updateProfile = async (req, res) => {
     try {
         const { username, avatarUrl } = req.body;
@@ -175,7 +154,6 @@ exports.updateProfile = async (req, res) => {
             });
         }
 
-        // Update fields
         if (username) user.username = username;
         if (avatarUrl) user.avatarUrl = avatarUrl;
 
