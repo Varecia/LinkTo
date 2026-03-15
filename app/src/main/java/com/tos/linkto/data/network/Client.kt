@@ -5,7 +5,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "https://www.example.com/" // TODO: 服务器地址
+    private const val BASE_URL = "https://localhost:8080/"
 
     private val retrofit by lazy {
         Retrofit.Builder()
