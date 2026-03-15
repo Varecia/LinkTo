@@ -24,5 +24,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "LinkTo"
 include(":app")
-include(":edgeserver")
+//include(":edgeserver")
 include(":cloudserver")
