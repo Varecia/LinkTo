@@ -28,20 +28,16 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+import com.tos.linkto.ui.components.StupidButton
+import com.tos.linkto.ui.components.StupidSurface
+
 @Composable
 fun HomeScreen(
-    tts: TextToSpeech?,
     destinationText: String,
     onStartNav: () -> Unit,
     onStartAvoid: () -> Unit,
-    isAccessibilityMode: Boolean,          // 新增：接收当前模式状态
-    onAccessibilityToggle: (Boolean) -> Unit, // 新增：切换模式的回调
+    isAccessibilityMode: Boolean,
 ) {
-    // 记录点击时间的状态
-    var lastClickTimeSearch by remember { mutableLongStateOf(0L) }
-    var lastClickTimeNav by remember { mutableLongStateOf(0L) }
-    var lastClickTimeAvoid by remember { mutableLongStateOf(0L) }
-
     Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
 
         // 1. 全屏地图占位 (灰底)
@@ -50,22 +46,12 @@ fun HomeScreen(
         // 2. 顶部搜索框
         Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             val searchLabel = "搜索框内容：${if (destinationText.isEmpty()) "空" else destinationText}"
-            Surface(
-                onClick = {
-                    if(isAccessibilityMode) {
-                        val currentTime = System.currentTimeMillis()
-                        if (currentTime - lastClickTimeSearch < 500) {
-                            // 双击搜索框逻辑：清除内容或重新启动语音
-                            MainActivity.instance.speak("重新开始语音识别")
-                            onStartNav()
-                        } else {
-                            MainActivity.instance.speak(searchLabel)
-                        }
-                        lastClickTimeSearch = currentTime
-                    }else{
-                        MainActivity.instance.speak("重新开始语音识别")
-                        onStartNav()
-                    }
+            StupidSurface(
+                isAccessibilityMode = isAccessibilityMode,
+                label = searchLabel,
+                onAction = {
+                    MainActivity.instance.speak("重新开始语音识别")
+                    onStartNav() // 假设这里是你触发语音重试的逻辑
                 },
                 modifier = Modifier.fillMaxWidth().height(80.dp),
                 color = Color(0xFF333333),
@@ -90,20 +76,10 @@ fun HomeScreen(
                 .padding(20.dp)
         ) {
             // 开始导航按钮
-            Button(
-                onClick = {
-                    if(isAccessibilityMode) {
-                        val currentTime = System.currentTimeMillis()
-                        if (currentTime - lastClickTimeNav < 500) {
-                            onStartNav() // 执行导航
-                        } else {
-                            MainActivity.instance.speak("开始导航")
-                        }
-                        lastClickTimeNav = currentTime
-                    }else{
-                        onStartNav() // 执行导航
-                    }
-                },
+            StupidButton(
+                isAccessibilityMode = isAccessibilityMode,
+                label = "开始导航",
+                onAction = { onStartNav() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(140.dp)
@@ -115,20 +91,10 @@ fun HomeScreen(
             }
 
             // 开始避障按钮
-            Button(
-                onClick = {
-                    if(isAccessibilityMode) {
-                        val currentTime = System.currentTimeMillis()
-                        if (currentTime - lastClickTimeAvoid < 500) {
-                            onStartAvoid() // 执行避障
-                        } else {
-                            MainActivity.instance.speak("开始避障")
-                        }
-                        lastClickTimeAvoid = currentTime
-                    }else{
-                        onStartAvoid() // 执行避障
-                    }
-                },
+            StupidButton(
+                isAccessibilityMode = isAccessibilityMode,
+                label = "开始避障",
+                onAction = { onStartAvoid() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(140.dp),

@@ -4,10 +4,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Brightness4
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -32,19 +28,38 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+import com.tos.linkto.ui.components.StupidCard
+import com.tos.linkto.ui.components.StupidButton
+import kotlinx.coroutines.delay
+
 @OptIn(ExperimentalMaterial3Api::class) // 使用可点击 Card 需要
 @Composable
 fun UserScreen(
     isDarkTheme: Boolean,
     onThemeToggle: () -> Unit,
-    isAccessibilityMode: Boolean,          // 新增：接收当前模式状态
-    onAccessibilityToggle: (Boolean) -> Unit, // 新增：切换模式的回调
+    isAccessibilityMode: Boolean,
+    onAccessibilityToggle: (Boolean) -> Unit,
     onLogout: () -> Unit
 ) {
-    // 记录点击时间的本地状态
-    var lastClickTimeTheme by remember { mutableLongStateOf(0L) }
-    var lastClickTimeLogout by remember { mutableLongStateOf(0L) }
-    var lastClickTimeMode by remember { mutableLongStateOf(0L) } // 模式开关的点击时间
+    var showLogoutDialog by remember { mutableStateOf(false) }
+    var timerCount by remember { mutableIntStateOf(5) } // 倒计时 5 秒
+
+    // 自动取消计时器逻辑
+    if (showLogoutDialog) {
+        LaunchedEffect(key1 = showLogoutDialog) {
+            //立即朗读弹窗
+            if (isAccessibilityMode) {
+                MainActivity.instance.speak("确认退出吗？十秒内无操作将自动取消。")
+            }
+
+            timerCount = 10
+            while (timerCount > 0) {
+                delay(1000) // 每秒减一
+                timerCount--
+            }
+            showLogoutDialog = false // 倒计时结束，自动关闭
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -63,23 +78,10 @@ fun UserScreen(
 
         // ================= 1. 无障碍语音模式开关 =================
         val modeLabel = if (isAccessibilityMode) "无障碍语音模式已开启，双击关闭" else "无障碍语音模式已关闭"
-        Card(
-            onClick = {
-                if (isAccessibilityMode) {
-                    val currentTime = System.currentTimeMillis()
-                    if (currentTime - lastClickTimeMode < 500) {
-                        onAccessibilityToggle(false) // 双击关闭
-                        MainActivity.instance.speak("无障碍模式已关闭")
-                    } else {
-                        MainActivity.instance.speak(modeLabel)
-                    }
-                    lastClickTimeMode = currentTime
-                } else {
-                    // 如果当前是关闭状态，直接单击就能开启
-                    onAccessibilityToggle(true)
-                    MainActivity.instance.speak("无障碍模式已开启")
-                }
-            },
+        StupidCard(
+            isAccessibilityMode = isAccessibilityMode,
+            label = modeLabel,
+            onAction = { onAccessibilityToggle(!isAccessibilityMode) },
             modifier = Modifier.fillMaxWidth().height(100.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
         ) {
@@ -103,20 +105,10 @@ fun UserScreen(
         // --- 主题切换卡片 ---
         val themeLabel = if (isDarkTheme) "当前是深色模式" else "当前是浅色模式"
 
-        Card(
-            onClick = {
-                if(isAccessibilityMode) {
-                    val currentTime = System.currentTimeMillis()
-                    if (currentTime - lastClickTimeTheme < 500) {
-                        onThemeToggle() // 执行切换
-                    } else {
-                        MainActivity.instance.speak(themeLabel) // 单击朗读状态
-                    }
-                    lastClickTimeTheme = currentTime
-                }else{
-                    onThemeToggle() // 执行切换
-                }
-            },
+        StupidCard(
+            isAccessibilityMode = isAccessibilityMode,
+            label = themeLabel,
+            onAction = { onThemeToggle() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(100.dp),
@@ -141,20 +133,10 @@ fun UserScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         // --- 退出登录按钮 ---
-        Button(
-            onClick = {
-                if(isAccessibilityMode) {
-                    val currentTime = System.currentTimeMillis()
-                    if (currentTime - lastClickTimeLogout < 500) {
-                        onLogout() // 执行退出
-                    } else {
-                        MainActivity.instance.speak("退出登录") // 单击朗读名称
-                    }
-                    lastClickTimeLogout = currentTime
-                }else{
-                    onLogout()
-                }
-            },
+        StupidButton(
+            isAccessibilityMode = isAccessibilityMode,
+            label = "退出登录",
+            onAction = { showLogoutDialog = true },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(80.dp),
@@ -168,5 +150,32 @@ fun UserScreen(
             Spacer(modifier = Modifier.width(8.dp))
             Text("退出登录", fontSize = 24.sp, fontWeight = FontWeight.Bold)
         }
+    }
+
+    // ================= 确认退出弹窗 =================
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title = { Text("确认退出") },
+            text = {
+                Text("您确定要退出登录吗？\n该操作将在 ${timerCount} 秒后自动取消。")
+            },
+            confirmButton = {
+                // 确认按钮也得是 StupidButton，方便盲人双击确认
+                StupidButton(
+                    isAccessibilityMode = isAccessibilityMode,
+                    label = "确认退出",
+                    onAction = {
+                        showLogoutDialog = false
+                        onLogout()
+                    }
+                ) { Text("确认") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutDialog = false }) {
+                    Text("取消")
+                }
+            }
+        )
     }
 }

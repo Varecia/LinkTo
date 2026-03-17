@@ -15,6 +15,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tos.linkto.MainActivity
+import com.tos.linkto.ui.components.StupidButton
+import com.tos.linkto.ui.components.StupidCard
+import com.tos.linkto.ui.components.StupidIconButton
 
 // 1. 定义数据模型
 data class LinkedUser(
@@ -45,10 +48,6 @@ fun LinkScreen(
     // 追踪弹窗状态
     var showAddDialog by remember { mutableStateOf(false) }
 
-    // 点击时间记录
-    var lastClickTimeAdd by remember { mutableLongStateOf(0L) }
-    var lastClickTimeBack by remember { mutableLongStateOf(0L) }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -58,19 +57,11 @@ fun LinkScreen(
                 // 左侧返回按钮（仅在详情页显示）
                 navigationIcon = {
                     if (selectedUser != null) {
-                        IconButton(onClick = {
-                            if(isAccessibilityMode) {
-                                val currentTime = System.currentTimeMillis()
-                                if (currentTime - lastClickTimeBack < 500) {
-                                    selectedUser = null // 双击退回列表
-                                } else {
-                                    MainActivity.instance.speak("返回联系人列表")
-                                }
-                                lastClickTimeBack = currentTime
-                            }else{
-                                selectedUser = null // 双击退回列表
-                            }
-                        }) {
+                        StupidIconButton(
+                            isAccessibilityMode = isAccessibilityMode,
+                            label = "返回联系人列表",
+                            onAction = { selectedUser = null }
+                        ) {
                             Icon(Icons.Default.ArrowBack, contentDescription = null)
                         }
                     }
@@ -78,19 +69,11 @@ fun LinkScreen(
                 // 右侧添加按钮（仅在列表页显示）
                 actions = {
                     if (selectedUser == null) {
-                        IconButton(onClick = {
-                            if(isAccessibilityMode) {
-                                val currentTime = System.currentTimeMillis()
-                                if (currentTime - lastClickTimeAdd < 500) {
-                                    showAddDialog = true // 双击打开添加弹窗
-                                } else {
-                                    MainActivity.instance.speak("添加关联用户")
-                                }
-                                lastClickTimeAdd = currentTime
-                            }else{
-                                showAddDialog = true // 双击打开添加弹窗
-                            }
-                        }) {
+                        StupidIconButton(
+                            isAccessibilityMode = isAccessibilityMode,
+                            label = "添加关联用户",
+                            onAction = { showAddDialog = true }
+                        ) {
                             Icon(Icons.Default.Add, contentDescription = null)
                         }
                     }
@@ -101,7 +84,9 @@ fun LinkScreen(
             )
         }
     ) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
+        Box(modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()) {
             if (selectedUser == null) {
                 // ================= 状态一：用户列表 =================
                 LazyColumn(
@@ -146,27 +131,17 @@ fun UserListItem(
     isAccessibilityMode: Boolean,
     onSelect: () -> Unit
 ) {
-    var lastClickTime by remember { mutableLongStateOf(0L) }
-
-    Card(
-        onClick = {
-            if(isAccessibilityMode) {
-                val currentTime = System.currentTimeMillis()
-                if (currentTime - lastClickTime < 500) {
-                    onSelect() // 双击进入详情
-                } else {
-                    MainActivity.instance.speak("${user.name}, ${user.role}, 当前状态${user.status}")
-                }
-                lastClickTime = currentTime
-            }else{
-                onSelect() // 进入详情
-            }
-        },
+    StupidCard(
+        isAccessibilityMode = isAccessibilityMode,
+        label = "${user.name}, ${user.role}, 当前状态${user.status}",
+        onAction = { onSelect() },
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(Icons.Default.Person, contentDescription = null, modifier = Modifier.size(40.dp))
@@ -183,10 +158,11 @@ fun UserListItem(
 @Composable
 fun UserDetailView(user: LinkedUser, isAccessibilityMode: Boolean) {
     var messageText by remember { mutableStateOf("") }
-    var lastClickTimeSend by remember { mutableLongStateOf(0L) }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // 1. 位置与状态卡片
@@ -206,35 +182,26 @@ fun UserDetailView(user: LinkedUser, isAccessibilityMode: Boolean) {
         OutlinedTextField(
             value = messageText,
             onValueChange = { messageText = it },
-            modifier = Modifier.fillMaxWidth().weight(1f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
             placeholder = { Text("请输入要发送的内容...") }
         )
 
-        Button(
-            onClick = {
-                if(isAccessibilityMode) {
-                    val currentTime = System.currentTimeMillis()
-                    if (currentTime - lastClickTimeSend < 500) {
-                        if (messageText.isNotBlank()) {
-                            MainActivity.instance.speak("留言已发送")
-                            messageText = "" // 发送后清空输入框
-                        } else {
-                            MainActivity.instance.speak("留言内容不能为空")
-                        }
-                    } else {
-                        MainActivity.instance.speak("双击发送留言")
-                    }
-                    lastClickTimeSend = currentTime
-                }else{
-                    if (messageText.isNotBlank()) {
-                        MainActivity.instance.speak("留言已发送")
-                        messageText = "" // 发送后清空输入框
-                    } else {
-                        MainActivity.instance.speak("留言内容不能为空")
-                    }
+        StupidButton(
+            isAccessibilityMode = isAccessibilityMode,
+            label = "发送留言",
+            onAction = {
+                if (messageText.isNotBlank()) {
+                    MainActivity.instance.speak("留言已发送")
+                    messageText = ""
+                } else {
+                    MainActivity.instance.speak("留言内容不能为空")
                 }
             },
-            modifier = Modifier.fillMaxWidth().height(80.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp),
             shape = MaterialTheme.shapes.large
         ) {
             Text("发送留言", fontSize = 24.sp, fontWeight = FontWeight.Bold)
