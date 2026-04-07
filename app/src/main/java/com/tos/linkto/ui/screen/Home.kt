@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tos.linkto.MainActivity
 import com.tos.linkto.R
+import com.tos.linkto.StreamActivity
 
 @Composable
 fun HomeScreen() {
@@ -64,6 +66,17 @@ fun HomeScreen() {
                         modifier = Modifier.padding(top = 8.dp)
                     )
                 }
+            }
+            Button(
+                modifier = Modifier.padding(8.dp),
+                onClick = {
+                    // TODO: 按道理来说这里需要先申请权限再启动，不过暂时无所谓（
+                    MainActivity.instance.raiseActivity(StreamActivity::class.java)
+                }
+            ) {
+                Text(
+                    text = "开始同步"
+                )
             }
         }
     }

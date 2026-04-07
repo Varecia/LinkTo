@@ -15,12 +15,12 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tos.linkto.R
 import com.tos.linkto.vm.AuthVM
-import com.tos.linkto.vm.AuthVMFactory
+import com.tos.linkto.vm.VMFactory
 
 @Composable
 fun AuthScreen(
     onAuthSuccess: () -> Unit,
-    authVM: AuthVM = viewModel(factory = AuthVMFactory())
+    authVM: AuthVM = viewModel(factory = VMFactory())
 ) {
     var isLoginMode by remember { mutableStateOf(true) }
     var username by remember { mutableStateOf("") }
